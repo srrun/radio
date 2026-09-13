@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Webbradio Sverige</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #101010, #252525);
+    color: white;
+}
+
+header {
+    background: #111;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+header p {
+    margin: 7px 0 0;
+    color: #999;
+}
+
+.container {
+    width: min(1100px, 94%);
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: 330px 1fr;
+    gap: 25px;
+}
+
+/* KANALLISTA */
+
+.channels {
+    background: #181818;
+    border-radius: 18px;
+    padding: 18px;
+    height: fit-content;
+}
+
+.channels h2 {
+    margin-top: 0;
+    font-size: 19px;
+}
+
+.channel {
+    width: 100%;
+    border: 0;
+    margin-bottom: 7px;
+    padding: 13px 14px;
+    border-radius: 10px;
+    background: #262626;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: .15s;
+    font-size: 14px;
+}
+
+.channel:hover {
+    background: #333;
+}
+
+.channel.active {
+    background: #ffd400;
+    color: #111;
+    font-weight: bold;
+}
+
+.group {
+    margin-top: 22px;
+    margin-bottom: 8px;
+    color: #777;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* PLAYER */
+
+.player {
+    background: #181818;
+    border-radius: 22px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 25px 70px rgba(0,0,0,.45);
+}
+
+.logo {
+    display: inline-block;
+    background: #ffd400;
+    color: #111;
+    padding: 9px 15px;
+    font-weight: 900;
+    font-size: 23px;
+    margin-bottom: 25px;
+}
+
+#station {
+    font-size: 30px;
+    margin: 0;
+}
+
+#description {
+    color: #999;
+    margin-top: 8px;
+}
+
+.live {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 25px 0;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: #e00000;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #e00000;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0%,100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .3;
+    }
+}
+
+.play {
+    width: 100px;
+    height: 100px;
+    border: 0;
+    border-radius: 50%;
+    background: #ffd400;
+    color: #111;
+    font-size: 37px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.play:hover {
+    transform: scale(1.07);
+}
+
+.play:active {
+    transform: scale(.95);
+}
+
+.volume {
+    margin-top: 35px;
+}
+
+.volume label {
+    display: block;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #ffd400;
+}
+
+#status {
+    margin-top: 20px;
+    color: #999;
+    min-height: 20px;
+}
+
+.error {
+    color: #ff6565 !important;
+}
+
+.footer {
+    margin-top: 35px;
+    color: #666;
+    font-size: 11px;
+}
+
+@media(max-width: 800px) {
+
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .channels {
+        order: 2;
+    }
+
+    .player {
+        order: 1;
+        padding: 30px 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🇸🇪 Webbradio Sverige</h1>
+    <p>Aftonbladet Radio och Sveriges Radio</p>
+</header>
+
+
+<div class="container">
+
+    <!-- KANALER -->
+
+    <aside class="channels">
+
+        <h2>Kanaler</h2>
+
+        <div class="group">Aftonbladet</div>
+
+        <button class="channel active"
+            data-name="Aftonbladet Radio"
+            data-url="https://abtvlive-lh.akamaized.net/hls/live/msl5/20001068/ab/radio/master.m3u8">
+            🔴 Aftonbladet Radio
+        </button>
+
+
+        <div class="group">Sveriges Radio</div>
+
+        <button class="channel"
+            data-name="P1"
+            data-url="https://edge1.sr.se/p1-aac-128">
+            P1
+        </button>
+
+        <button class="channel"
+            data-name="P2"
+            data-url="https://edge1.sr.se/p2-aac-128">
+            P2
+        </button>
+
+        <button class="channel"
+            data-name="P3"
+            data-url="https://edge1.sr.se/p3-aac-128">
+            P3
+        </button>
+
+        <button class="channel"
+            data-name="P3 Din Gata"
+            data-url="https://edge1.sr.se/dingata-aac-128">
+            P3 Din Gata
+        </button>
+
+        <button class="channel"
+            data-name="P4 Plus"
+            data-url="https://edge1.sr.se/p4plus-aac-128">
+            P4 Plus
+        </button>
+
+        <button class="channel"
+            data-name="P6"
+            data-url="https://edge1.sr.se/p6-aac-128">
+            P6
+        </button>
+
+        <button class="channel"
+            data-name="P4 Digital"
+            data-url="https://edge1.sr.se/p4digi-aac-128">
+            P4 Digital
+        </button>
+
+        <button class="channel"
+            data-name="Ekot sänder direkt"
+            data-url="https://edge1.sr.se/ekotdirekt-aac-128">
+            Ekot sänder direkt
+        </button>
+
+        <button class="channel"
+            data-name="Radioapans knattekanal"
+            data-url="https://edge1.sr.se/knattekanalen-aac-128">
+            Radioapans knattekanal
+        </button>
+
+        <button class="channel"
+            data-name="Sameradion"
+            data-url="https://edge1.sr.se/sameradion-aac-128">
+            Sameradion
+        </button>
+
+        <button class="channel"
+            data-name="Sveriges Radio Finska"
+            data-url="https://edge1.sr.se/finska-aac-128">
+            Sveriges Radio Finska
+        </button>
+
+
+        <div class="group">P4 – Lokala kanaler</div>
+
+        <button class="channel" data-name="P4 Blekinge" data-url="https://edge1.sr.se/p4blek-aac-128">P4 Blekinge</button>
+        <button class="channel" data-name="P4 Dalarna" data-url="https://edge1.sr.se/p4dala-aac-128">P4 Dalarna</button>
+        <button class="channel" data-name="P4 Gotland" data-url="https://edge1.sr.se/p4gotl-aac-128">P4 Gotland</button>
+        <button class="channel" data-name="P4 Gävleborg" data-url="https://edge1.sr.se/p4gavl-aac-128">P4 Gävleborg</button>
+        <button class="channel" data-name="P4 Göteborg" data-url="https://edge1.sr.se/p4gbg-aac-128">P4 Göteborg</button>
+        <button class="channel" data-name="P4 Halland" data-url="https://edge1.sr.se/p4hall-aac-128">P4 Halland</button>
+        <button class="channel" data-name="P4 Jämtland" data-url="https://edge1.sr.se/p4jmtl-aac-128">P4 Jämtland</button>
+        <button class="channel" data-name="P4 Jönköping" data-url="https://edge1.sr.se/p4jkpg-aac-128">P4 Jönköping</button>
+        <button class="channel" data-name="P4 Kalmar" data-url="https://edge1.sr.se/p4kalm-aac-128">P4 Kalmar</button>
+        <button class="channel" data-name="P4 Kristianstad" data-url="https://edge1.sr.se/p4krist-aac-128">P4 Kristianstad</button>
+        <button class="channel" data-name="P4 Kronoberg" data-url="https://edge1.sr.se/p4kron-aac-128">P4 Kronoberg</button>
+        <button class="channel" data-name="P4 Malmöhus" data-url="https://edge1.sr.se/p4malm-aac-128">P4 Malmöhus</button>
+        <button class="channel" data-name="P4 Norrbotten" data-url="https://edge1.sr.se/p4nbtn-aac-128">P4 Norrbotten</button>
+        <button class="channel" data-name="P4 Sjuhärad" data-url="https://edge1.sr.se/p4sju-aac-128">P4 Sjuhärad</button>
+        <button class="channel" data-name="P4 Skaraborg" data-url="https://edge1.sr.se/p4skbg-aac-128">P4 Skaraborg</button>
+        <button class="channel" data-name="P4 Stockholm" data-url="https://edge1.sr.se/p4sth-aac-128">P4 Stockholm</button>
+        <button class="channel" data-name="P4 Sörmland" data-url="https://edge1.sr.se/p4sorm-aac-128">P4 Sörmland</button>
+        <button class="channel" data-name="P4 Uppland" data-url="https://edge1.sr.se/p4uppl-aac-128">P4 Uppland</button>
+        <button class="channel" data-name="P4 Värmland" data-url="https://edge1.sr.se/p4vrml-aac-128">P4 Värmland</button>
+        <button class="channel" data-name="P4 Väst" data-url="https://edge1.sr.se/p4vast-aac-128">P4 Väst</button>
+        <button class="channel" data-name="P4 Västerbotten" data-url="https://edge1.sr.se/p4vbtn-aac-128">P4 Västerbotten</button>
+        <button class="channel" data-name="P4 Västernorrland" data-url="https://edge1.sr.se/p4vnrl-aac-128">P4 Västernorrland</button>
+        <button class="channel" data-name="P4 Västmanland" data-url="https://edge1.sr.se/p4vstm-aac-128">P4 Västmanland</button>
+        <button class="channel" data-name="P4 Örebro" data-url="https://edge1.sr.se/p4oreb-aac-128">P4 Örebro</button>
+        <button class="channel" data-name="P4 Östergötland" data-url="https://edge1.sr.se/p4ostg-aac-128">P4 Östergötland</button>
+
+    </aside>
+
+
+    <!-- PLAYER -->
+
+    <main class="player">
+
+        <div class="logo">RADIO</div>
+
+        <h1 id="station">Aftonbladet Radio</h1>
+
+        <div id="description">
+            Live radio
+        </div>
+
+        <div class="live">
+            <span class="dot"></span>
+            LIVE
+        </div>
+
+        <button
+            id="playButton"
+            class="play">
+            ▶
+        </button>
+
+        <div id="status">
+            Tryck på play för att lyssna
+        </div>
+
+        <div class="volume">
+
+            <label for="volume">
+                Volym
+            </label>
+
+            <input
+                type="range"
+                id="volume"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.8">
+
+        </div>
+
+        <div class="footer">
+            Aftonbladet Radio / Sveriges Radio
+        </div>
+
+        <audio id="audio"></audio>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const audio = document.getElementById("audio");
+const playButton = document.getElementById("playButton");
+const volume = document.getElementById("volume");
+const status = document.getElementById("status");
+const station = document.getElementById("station");
+
+let currentUrl = "";
+let hls = null;
+
+
+/*
+    Byter kanal
+*/
+
+async function selectChannel(button) {
+
+    const url = button.dataset.url;
+    const name = button.dataset.name;
+
+    currentUrl = url;
+
+    station.textContent = name;
+
+    document.querySelectorAll(".channel").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+
+    /*
+        Stoppa tidigare stream
+    */
+
+    audio.pause();
+
+    audio.removeAttribute("src");
+
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
+
+
+    /*
+        Aftonbladet använder HLS (.m3u8)
+    */
+
+    if (url.includes(".m3u8")) {
+
+        if (typeof Hls !== "undefined" && Hls.isSupported()) {
+
+            hls = new Hls();
+
+            hls.loadSource(url);
+            hls.attachMedia(audio);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, async () => {
+
+                try {
+                    await audio.play();
+
+                    playButton.textContent = "❚❚";
+                    status.textContent = "🔴 Lyssnar live";
+
+                } catch(e) {
+
+                    status.textContent =
+                        "Tryck på play för att starta";
+
+                }
+
+            });
+
+        }
+
+        else if (
+            audio.canPlayType(
+                "application/vnd.apple.mpegurl"
+            )
+        ) {
+
+            audio.src = url;
+
+            try {
+                await audio.play();
+
+                playButton.textContent = "❚❚";
+                status.textContent = "🔴 Lyssnar live";
+
+            } catch(e) {
+
+                status.textContent =
+                    "Tryck på play för att starta";
+
+            }
+
+        }
+
+    }
+
+    /*
+        Sveriges Radio använder vanlig
+        AAC/MP3-stream.
+    */
+
+    else {
+
+        audio.src = url;
+
+        try {
+
+            await audio.play();
+
+            playButton.textContent = "❚❚";
+            status.textContent = "🔴 Lyssnar live";
+
+        }
+
+        catch(e) {
+
+            status.textContent =
+                "Tryck på play för att starta";
+
+        }
+
+    }
+
+}
+
+
+/*
+    Klick på kanal
+*/
+
+document.querySelectorAll(".channel").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        selectChannel(button);
+
+    });
+
+});
+
+
+/*
+    Play / Pause
+*/
+
+playButton.addEventListener("click", async () => {
+
+    if (audio.paused) {
+
+        try {
+
+            await audio.play();
+
+            playButton.textContent = "❚❚";
+            status.textContent = "🔴 Lyssnar live";
+
+        }
+
+        catch(e) {
+
+            status.textContent =
+                "Kunde inte starta streamen";
+
+            status.classList.add("error");
+
+        }
+
+    }
+
+    else {
+
+        audio.pause();
+
+        playButton.textContent = "▶";
+        status.textContent = "Pausad";
+
+    }
+
+});
+
+
+/*
+    Volym
+*/
+
+volume.addEventListener("input", () => {
+
+    audio.volume = volume.value;
+
+});
+
+
+/*
+    Spelstatus
+*/
+
+audio.addEventListener("playing", () => {
+
+    playButton.textContent = "❚❚";
+    status.textContent = "🔴 Lyssnar live";
+    status.classList.remove("error");
+
+});
+
+
+audio.addEventListener("waiting", () => {
+
+    status.textContent = "Buffrar...";
+
+});
+
+
+audio.addEventListener("error", () => {
+
+    status.textContent =
+        "Streamen kunde inte laddas";
+
+    status.classList.add("error");
+
+    playButton.textContent = "▶";
+
+});
+
+
+audio.volume = 0.8;
+
+
+/*
+    Ladda första kanalen
+*/
+
+const firstChannel =
+    document.querySelector(".channel");
+
+if (firstChannel) {
+
+    station.textContent =
+        firstChannel.dataset.name;
+
+}
+
+</script>
+
+<!--
+    HLS.js behövs för Aftonbladets .m3u8-stream
+-->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+</body>
+</html>
